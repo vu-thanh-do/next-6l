@@ -82,28 +82,27 @@ const page = () => {
               alt="Main News Image"
               className="w-full h-[600px]"
             />
-            <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white p-4">
-              <h2 className="text-4xl font-bold">
-                Lorem ipsum dolor sit amet consectetur.
+            <div className="absolute  inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white p-4">
+              <h2 className="text-4xl font-bold absolute bottom-[160px]">
+                Lorem ipsum dolor sit amet consectetur. <br/> Dignissim aliquam mattis quam
               </h2>
-              <p className="text-2xl mt-2">Dignissim aliquam mattis quam</p>
-              <p className="mt-4">
-                The Pentagon called the object, which has flown from Montana to
-                Kansas, an "intelligence gathering" balloon. Beijing said it was
+
+              <p className="mt-4 absolute bottom-[100px] pl-3 ">
+                The  called  object, which has flown  Montana to
+                Kansas, an "intelligence  <br/> gathering" balloon. Beijing said it was
                 used mainly for weather research and had strayed off course.
               </p>
             </div>
           </section>
-          <section className="bg-gray-300 text-left py-4">
+          <section className="bg-gray-300 text-left py-4 mt-12">
             <p className="text-black font-bold text-lg">
               Red's values of kindness, freedom, responsibility, and
-              multiculturalism. You'll connect with diverse cultures, sharpen
-              your professional skills, and enjoy various benefits.
+              multiculturalism. You'll connect with diverse cultures
             </p>
           </section>
           <section className="p-8">
-            <div className="flex justify-start space-x-4 mb-4">
-              <a href="#" className="text-blue-600 border-b-2 border-blue-600">
+            <div className="flex justify-start space-x-4 mb-4 border-b border-gray-600 w-[370px]">
+              <a href="#" className="text-white px-2 border-b-2 bg-slate-700 border-blue-600">
                 LOREM
               </a>
               <a href="#" className="text-gray-700">

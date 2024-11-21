@@ -34,6 +34,29 @@ app.post("/post-news", async (req, res) => {
     });
   }
 });
+app.post("/edit-news/:id", async (req, res) => {
+  try {
+    const newData = await News.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          title: req.body.title,
+          detail: req.body.detail,
+          image: req.body.image,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    return res.json(newData);
+  } catch (error) {
+    return res.json({
+      message: error.message,
+    });
+  }
+});
 app.get("/news", async (req, res) => {
   try {
     const newData = await News.find({});
@@ -47,6 +70,16 @@ app.get("/news", async (req, res) => {
 app.get("/new/:id", async (req, res) => {
   try {
     const newData = await News.findById(req.params.id);
+    return res.json(newData);
+  } catch (error) {
+    return res.json({
+      message: error.message,
+    });
+  }
+});
+app.get("/new1/:id", async (req, res) => {
+  try {
+    const newData = await News.findByIdAndDelete(req.params.id);
     return res.json(newData);
   } catch (error) {
     return res.json({
