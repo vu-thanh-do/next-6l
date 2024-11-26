@@ -7,8 +7,13 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import http from "http";
 import News from "./models/news.js";
-
+import multer from "multer";
+import path from "path";
+import { fileURLToPath } from "url";
+import fs from "fs";
 dotenv.config();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 // khởi tạo
 const app = express();
 const server = http.createServer(app);
@@ -24,6 +29,33 @@ mongoose.connect(process.env.URI);
 app.get("/", async (req, res) => {
   res.json("success");
 });
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = path.join(__dirname, "./uploads/");
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const safeFileName = file.originalname
+      .replace(/[^a-z0-9.]/gi, "_")
+      .toLowerCase();
+    cb(null, uniqueSuffix + "-" + safeFileName);
+  },
+});
+const upload = multer({ storage: storage });
+app.post("/upload-image", upload.single("image"), async (req, res) => {
+  try {
+    const avatarFileName = req.file.filename;
+    return res.json(avatarFileName);
+  } catch (error) {
+    res.status(500).json({ message: "Error updating avatar", error });
+  }
+});
+app.use(express.static("src/uploads"));
 app.post("/post-news", async (req, res) => {
   try {
     const newData = await News.create(req.body);

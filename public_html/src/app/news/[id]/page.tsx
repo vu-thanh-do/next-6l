@@ -96,14 +96,14 @@ const page = ({ params }: any) => {
           </header>
           <section className="absolute top-0 w-full">
             <img
-              src="https://s3-alpha-sig.figma.com/img/6085/7018/ef0109967cff535c37c470814748fdb3?Expires=1732492800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=aVN~jXHWokkzme52nVQVf~V1-Ow5xWTbk3wpLX3yt-d4v3bt--l0UTKvhvvcKZF7FG4ymMNjfwGLRfexsALyGeR7ivalllMn8xeCn127kzt4w3axhdzlgsH5e8-OU6hRn5LCgFUnWrpXG8ggpMds828YOXpO36pvV2bbWkehRa4QrdAPZXKt8Gu4xBywZggz2zS~NZQys1ndLrU~jZfduk1H3y2MZyaLVOacz4Vybo0TkCqeuKAZ89oKp-dYk3aFCTntxOvcqu0UMXy~~Mnp8l31Jh6WQ-WIE~p9sVQJnqt~PP8jiPrarOhK6vHtvfY6nsWc9IO2qXL9q2SxjwwqYw__"
+                src={`http://localhost:1968/${news?.image}`}
               alt="Main News Image"
               className="w-full h-[700px]"
             />
           </section>
         </div>
         <main>
-          <section className=" ">
+          <section className=" mx-20">
             <div className="relative">
               <div className=" bg-white p-4">
                 <h1 className="text-2xl font-bold">{news?.title}</h1>

@@ -24,14 +24,15 @@ import {
 const { Header, Content, Sider } = Layout;
 
 const Admin = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<any>({
     title: "",
     image: "",
     detail: "",
   });
-  const [checkId, setCheckId] = useState(null)
-  const [dataEdit, setDataEdit] = useState<any>(null)
-  const form = Form.useForm()
+  const [checkId, setCheckId] = useState(null);
+  const [dataEdit, setDataEdit] = useState<any>(null);
+  console.log(dataEdit, "dataEdit");
+  const form = Form.useForm();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [news, setNews] = useState([]);
@@ -56,10 +57,10 @@ const Admin = () => {
       setFormData({
         title: dataEdit.title,
         image: dataEdit.image,
-        detail : dataEdit.detail
-        })
-      }
-  },[checkId])
+        detail: dataEdit.detail,
+      });
+    }
+  }, [checkId]);
   const onClose = () => {
     setOpen(false);
   };
@@ -75,60 +76,75 @@ const Admin = () => {
     };
   });
   const checkAdmin = localStorage.getItem("email");
-  useEffect(() => {
-    if (!checkAdmin) {
-      alert("bạn không có quyền");
-      setTimeout(() => {
-        router.push("/admin");
-      }, 300);
-    }
-  }, [checkAdmin]);
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // useEffect(() => {
+  //   if (!checkAdmin) {
+  //     alert("bạn không có quyền");
+  //     setTimeout(() => {
+  //       router.push("/admin");
+  //     }, 300);
+  //   }
+  // }, [checkAdmin]);
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        setFormData({
-          ...formData,
-          image: reader.result as string, // Lưu base64 của ảnh
+      const formData = new FormData();
+      formData.append("image", file); // Gắn file vào FormData
+
+      try {
+        // Gửi file tới server qua API
+        const response = await fetch("http://localhost:1968/upload-image", {
+          method: "POST",
+          body: formData,
         });
-      };
-      reader.onerror = (error) => console.error("Lỗi đọc file:", error);
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Ảnh đã được upload:", data);
+          setFormData({
+            ...formData,
+            image: data,
+          });
+        } else {
+          console.error("Lỗi khi upload ảnh:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Lỗi khi upload ảnh:", error);
+      }
     }
   };
 
   const handleSave = async () => {
     try {
       if (!checkId) {
-          const response = await fetch(`http://localhost:1968/post-news`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData), // Gửi dữ liệu form
-      });
-      const result = await response.json();
-      console.log("Lưu thành công:", result);
-      message.success("Thêm mói thành công");
-      setTimeout(() => {
-        window.location.href = "/news";
-      }, 400);
+        const response = await fetch(`http://localhost:1968/post-news`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData), // Gửi dữ liệu form
+        });
+        const result = await response.json();
+        console.log("Lưu thành công:", result);
+        message.success("Thêm mói thành công");
+        setTimeout(() => {
+          window.location.href = "/news";
+        }, 400);
       } else {
-         const response = await fetch(`http://localhost:1968/edit-news/${checkId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      const result = await response.json();
-      console.log("Lưu thành công:", result);
-      message.success("thành công");
-    handelFetchApi();
-
+        const response = await fetch(
+          `http://localhost:1968/edit-news/${checkId}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          }
+        );
+        const result = await response.json();
+        console.log("Lưu thành công:", result);
+        message.success("thành công");
+        handelFetchApi();
       }
-
     } catch (error) {
       console.error("Lỗi khi lưu bài viết:", error);
     }
@@ -137,7 +153,7 @@ const Admin = () => {
     stt: index + 1,
     key: itc._id,
     title: itc.title,
-    image: itc.image,
+    image: "http://localhost:1968/" + itc.image,
     createdAt: itc.createdAt,
   }));
 
@@ -174,11 +190,15 @@ const Admin = () => {
         return (
           <div>
             <Space>
-              <Button onClick={() => {
-                setCheckId(image.key)
-                setDataEdit(image)
-                showDrawer()
-              }}>Sửa</Button>
+              <Button
+                onClick={() => {
+                  setCheckId(image.key);
+                  setDataEdit(image);
+                  showDrawer();
+                }}
+              >
+                Sửa
+              </Button>
               <Button
                 onClick={async () => {
                   if (window.confirm("bạn có muốn xoá nó ?")) {
@@ -199,9 +219,15 @@ const Admin = () => {
       },
     },
   ];
+  console.log(formData, "formData.image ");
   return (
     <>
-      <Drawer title={checkId ?"Sửa bài viết":"Thêm bài viết"} onClose={onClose} open={open} width={800}>
+      <Drawer
+        title={checkId ? "Sửa bài viết" : "Thêm bài viết"}
+        onClose={onClose}
+        open={open}
+        width={800}
+      >
         <div>
           <div className="mb-4">
             <label htmlFor="title" className="block font-bold mb-1">
@@ -220,7 +246,7 @@ const Admin = () => {
           </div>
           <div className="mb-4">
             <label htmlFor="image" className="block font-bold mb-1">
-              Ảnh (base64)
+              Ảnh
             </label>
             <input
               type="file"
@@ -231,7 +257,11 @@ const Admin = () => {
             />
             {formData.image && (
               <img
-                src={formData.image}
+                src={
+                  formData.image.startsWith("http://localhost:1968/")
+                    ? formData.image
+                    : "http://localhost:1968/" + formData.image
+                }
                 alt="Preview"
                 className="mt-2 w-48 h-48 object-cover border rounded-md"
               />
@@ -241,25 +271,39 @@ const Admin = () => {
             editor={ClassicEditor}
             data="<p>Viết nội dung tại đây...</p>"
             onReady={(editor) => {
+              // Tùy chỉnh upload ảnh
               editor.plugins.get("FileRepository").createUploadAdapter = (
                 loader
               ) => {
                 return {
-                  upload: () =>
-                    loader.file.then(
-                      (file: any) =>
-                        new Promise((resolve, reject) => {
-                          const reader = new FileReader();
-                          reader.readAsDataURL(file); // Chuyển file thành base64
-                          reader.onload = () => {
-                            resolve({
-                              default: reader.result, // Base64 string của ảnh
-                            });
-                          };
-                          reader.onerror = (error) => reject(error);
-                        })
-                    ),
-                  abort: () => console.log("Hủy tải ảnh."),
+                  upload: async () => {
+                    const file = (await loader.file) as any; // Lấy file từ loader
+                    const formData = new FormData();
+                    formData.append("image", file);
+                    try {
+                      const response = await fetch(
+                        "http://localhost:1968/upload-image",
+                        {
+                          method: "POST",
+                          body: formData,
+                        }
+                      );
+                      if (response.ok) {
+                        const data = await response.json();
+                        return {
+                          default: "http://localhost:1968/" + data, // Trả về URL ảnh
+                        };
+                      } else {
+                        throw new Error("Failed to upload image");
+                      }
+                    } catch (error) {
+                      console.error("Lỗi upload ảnh:", error);
+                      throw error;
+                    }
+                  },
+                  abort: () => {
+                    console.log("Upload ảnh đã bị hủy.");
+                  },
                 };
               };
             }}
@@ -267,10 +311,11 @@ const Admin = () => {
               const data = editor.getData();
               setFormData({
                 ...formData,
-                detail: data,
-              }); // Lưu nội dung HTML
+                detail: data, // Lưu nội dung HTML
+              });
             }}
           />
+
           <button
             className="bg-green-500 text-white font-bold px-3 py-2 rounded-md mt-4"
             onClick={handleSave}
@@ -316,11 +361,9 @@ const Admin = () => {
               <div className="flex justify-end">
                 <Button
                   onClick={() => {
-                    showDrawer()
-    setCheckId(null)
-
-                  }
-                  }
+                    showDrawer();
+                    setCheckId(null);
+                  }}
                   className="bg-green-500 text-white font-medium"
                 >
                   Thêm mới

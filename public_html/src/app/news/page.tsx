@@ -78,11 +78,11 @@ const page = () => {
           </section>
           <section className="relative">
             <img
-              src="https://s3-alpha-sig.figma.com/img/6085/7018/ef0109967cff535c37c470814748fdb3?Expires=1732492800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=aVN~jXHWokkzme52nVQVf~V1-Ow5xWTbk3wpLX3yt-d4v3bt--l0UTKvhvvcKZF7FG4ymMNjfwGLRfexsALyGeR7ivalllMn8xeCn127kzt4w3axhdzlgsH5e8-OU6hRn5LCgFUnWrpXG8ggpMds828YOXpO36pvV2bbWkehRa4QrdAPZXKt8Gu4xBywZggz2zS~NZQys1ndLrU~jZfduk1H3y2MZyaLVOacz4Vybo0TkCqeuKAZ89oKp-dYk3aFCTntxOvcqu0UMXy~~Mnp8l31Jh6WQ-WIE~p9sVQJnqt~PP8jiPrarOhK6vHtvfY6nsWc9IO2qXL9q2SxjwwqYw__"
+              src="/image.png"
               alt="Main News Image"
-              className="w-full h-[600px]"
+              className=" w-[1920px] h-[492px]"
             />
-            <div className="absolute  inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white p-4">
+            <div className="absolute  inset-0  flex flex-col justify-center items-center text-white p-4">
               <h2 className="text-4xl font-bold absolute bottom-[160px]">
                 Lorem ipsum dolor sit amet consectetur. <br/> Dignissim aliquam mattis quam
               </h2>
@@ -100,8 +100,8 @@ const page = () => {
               multiculturalism. You'll connect with diverse cultures
             </p>
           </section>
-          <section className="p-8">
-            <div className="flex justify-start space-x-4 mb-4 border-b border-gray-600 w-[370px]">
+          <section className="p-8 mx-24">
+            <div className="flex justify-start space-x-4 mb-4 border-b border-[#222222] w-[570px]">
               <a href="#" className="text-white px-2 border-b-2 bg-slate-700 border-blue-600">
                 LOREM
               </a>
@@ -118,14 +118,16 @@ const page = () => {
                 LOREM
               </a>
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-4 gap-4 my-[61px]">
               {news?.map((items: any, index: number) => (
-                <div onClick={()=> router.push(`/news/${items?._id}`)} key={items?._id} className="bg-white p-4 shadow">
-                  <img
-                    src={`${items?.image}`}
+                <div onClick={()=> router.push(`/news/${items?._id}`)} key={items?._id} className="bg-white p-4  ">
+                  <div className="flex justify-center items-center">
+                    <img
+                    src={`http://localhost:1968/${items?.image}`}
                     alt="News Image 1"
-                    className="w-full mb-4"
+                    className="w-[364px] h-[205px] mb-4 block"
                   />
+                  </div>
                   <h3 className="text-xl font-bold">{items?.title}</h3>
                   <p className="text-gray-500 mt-2">
                     {formatDate(items?.createdAt)}
@@ -133,6 +135,9 @@ const page = () => {
                 </div>
               ))}
             </div>
+            <div className="mt-3">
+               <hr className="bg-black p-[1px]"/>
+               </div>
           </section>
           <div className="flex items-center justify-center space-x-4 mt-10">
             <button className="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-full">
@@ -173,6 +178,7 @@ const page = () => {
               </svg>
             </button>
           </div>
+
         </main>
       </div>
       <Footer />
