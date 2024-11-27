@@ -1,6 +1,7 @@
 "use client";
 import Footer from "@/components/footer";
 import React, { useEffect, useState } from "react";
+import he from 'he';
 
 const page = ({ params }: any) => {
   const [news, setNews] = useState<any>();
@@ -48,6 +49,17 @@ const page = ({ params }: any) => {
       return `${years} years ago`;
     }
   };
+  const decodeHtml = (html :any) => {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    return doc.documentElement.textContent;
+  };
+  // console.log(news?.detail, "news?.detailnews?.detail");
+  // const decodeHtml = (html :any) => {
+  //   const doc = new DOMParser().parseFromString(html, 'text/html');
+  //   return doc.body.innerHTML;
+  // };
+
+  const cleanHtml = decodeHtml(news?.detail)
   return (
     <div>
       <div className="bg-white mb-5 relative">
@@ -96,7 +108,7 @@ const page = ({ params }: any) => {
           </header>
           <section className="absolute top-0 w-full">
             <img
-                src={`http://localhost:1968/${news?.image}`}
+              src={`http://localhost:1968/${news?.image}`}
               alt="Main News Image"
               className="w-full h-[700px]"
             />
@@ -158,9 +170,11 @@ const page = ({ params }: any) => {
                   </div>
                 </div>
               </div>
-              <div className="flex justify-center ">
+              <div className=" ">
                 <div
-                  dangerouslySetInnerHTML={{ __html: news?.detail }}
+                  dangerouslySetInnerHTML={{
+                    __html: cleanHtml, 
+                  }}
                   className="article-content"
                 />
               </div>
