@@ -87,14 +87,14 @@ const Admin = () => {
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const formData = new FormData();
-      formData.append("image", file); // Gắn file vào FormData
+      const formData2 = new FormData();
+      formData2.append("image", file); // Gắn file vào FormData
 
       try {
         // Gửi file tới server qua API
         const response = await fetch("http://localhost:1968/upload-image", {
           method: "POST",
-          body: formData,
+          body: formData2,
         });
 
         if (response.ok) {
@@ -115,13 +115,14 @@ const Admin = () => {
 
   const handleSave = async () => {
     try {
+      console.log(formData,'formData')
       if (!checkId) {
         const response = await fetch(`http://localhost:1968/post-news`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData), // Gửi dữ liệu form
+          body: JSON.stringify(formData), 
         });
         const result = await response.json();
         console.log("Lưu thành công:", result);
@@ -137,7 +138,7 @@ const Admin = () => {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(formData),
+            body: JSON.stringify({...formData, image : formData.image ? formData.image : dataEdit.image}),
           }
         );
         const result = await response.json();
@@ -173,8 +174,20 @@ const Admin = () => {
       dataIndex: "image",
       key: "image",
       render: (image: any) => {
-        return <img src={image} className="w-[100px] h-[100px]" />;
-      },
+        // Loại bỏ "http://localhost:1968/" nếu nó có ở đầu của URL
+        let imageUrl = image.startsWith("http://localhost:1968/")
+          ? image.replace("http://localhost:1968/", "")
+          : image;
+      
+        // Thêm lại "http://localhost:1968/" nếu imageUrl không có nó
+        if (!imageUrl.startsWith("http://localhost:1968/")) {
+          imageUrl = "http://localhost:1968/" + imageUrl;
+        }
+      
+        return <img src={imageUrl} className="w-[100px] h-[100px]" />;
+      }
+      
+      
     },
     {
       title: "createdAt",

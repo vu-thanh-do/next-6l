@@ -4,15 +4,21 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const page = () => {
-  const [news, setNews] = useState([]);
-    const router = useRouter();
+  const [news, setNews] = useState<any>([]);
+  const router = useRouter();
 
   useEffect(() => {
     const handelFetchApi = async () => {
       try {
         const response = await fetch(`http://localhost:1968/news`);
         const data = await response.json();
-        setNews(data);
+        const dataB = data.sort(
+          (a: any, b: any) =>
+            new Date(b.createdDate).getTime() -
+            new Date(a.createdDate).getTime()
+        );
+        setNews(dataB);
+
         console.log(data);
       } catch (error) {
         //
@@ -20,12 +26,29 @@ const page = () => {
     };
     handelFetchApi();
   }, []);
-  const formatDate = (dateString:any) => {
-  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' } as any;
-  const date = new Date(dateString);
+  const formatDate = (dateString: any) => {
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    } as any;
+    const date = new Date(dateString);
 
-  return date.toLocaleDateString('en-US', options).toUpperCase();
-};
+    return date.toLocaleDateString("en-US", options).toUpperCase();
+  };
+  const render = (image: any) => {
+    let imageUrl = image.startsWith("http://localhost:1968/")
+      ? image.replace("http://localhost:1968/", "")
+      : image;
+  
+    if (!imageUrl.startsWith("http://localhost:1968/")) {
+      imageUrl = "http://localhost:1968/" + imageUrl;
+    }
+  
+    return imageUrl
+  }
+  
   return (
     <div>
       <div className="bg-white mb-5">
@@ -50,8 +73,8 @@ const page = () => {
             <a href="#" className="text-gray-700">
               Blog/News
             </a>
-             <a href="#" className="text-[#0419DC] font-medium">
-             Contacts
+            <a href="#" className="text-[#0419DC] font-medium">
+              Contacts
             </a>
             <a href="#" className="text-gray-700">
               <svg
@@ -78,18 +101,18 @@ const page = () => {
           </section>
           <section className="relative">
             <img
-              src="/image.png"
+              src={news?.[0]?.image ? render(news?.[0]?.image):"/image.png"}
               alt="Main News Image"
               className=" w-[1920px] h-[492px]"
             />
             <div className="absolute  inset-0  flex flex-col justify-center items-center text-white p-4">
               <h2 className="text-4xl font-bold absolute bottom-[160px]">
-                Lorem ipsum dolor sit amet consectetur. <br/> Dignissim aliquam mattis quam
+                {news?.[0]?.title}
               </h2>
 
               <p className="mt-4 absolute bottom-[100px] pl-3 ">
-                The  called  object, which has flown  Montana to
-                Kansas, an "intelligence  <br/> gathering" balloon. Beijing said it was
+                The called object, which has flown Montana to Kansas, an
+                "intelligence <br /> gathering" balloon. Beijing said it was
                 used mainly for weather research and had strayed off course.
               </p>
             </div>
@@ -102,7 +125,10 @@ const page = () => {
           </section>
           <section className="p-8 mx-24">
             <div className="flex justify-start space-x-4 mb-4 border-b border-[#222222] w-[570px]">
-              <a href="#" className="text-white px-2 border-b-2 bg-slate-700 border-blue-600">
+              <a
+                href="#"
+                className="text-white px-2 border-b-2 bg-slate-700 border-blue-600"
+              >
                 LOREM
               </a>
               <a href="#" className="text-gray-700">
@@ -120,13 +146,17 @@ const page = () => {
             </div>
             <div className="grid grid-cols-4 gap-4 my-[61px]">
               {news?.map((items: any, index: number) => (
-                <div onClick={()=> router.push(`/news/${items?._id}`)} key={items?._id} className="bg-white p-4  ">
+                <div
+                  onClick={() => router.push(`/news/${items?._id}`)}
+                  key={items?._id}
+                  className="bg-white p-4  "
+                >
                   <div className="flex justify-center items-center">
                     <img
-                    src={`http://localhost:1968/${items?.image}`}
-                    alt="News Image 1"
-                    className="w-[364px] h-[205px] mb-4 block"
-                  />
+                      src={`http://localhost:1968/${items?.image}`}
+                      alt="News Image 1"
+                      className="w-[364px] h-[205px] mb-4 block"
+                    />
                   </div>
                   <h3 className="text-xl font-bold">{items?.title}</h3>
                   <p className="text-gray-500 mt-2">
@@ -136,8 +166,8 @@ const page = () => {
               ))}
             </div>
             <div className="mt-3">
-               <hr className="bg-black p-[1px]"/>
-               </div>
+              <hr className="bg-black p-[1px]" />
+            </div>
           </section>
           <div className="flex items-center justify-center space-x-4 mt-10">
             <button className="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-full">
@@ -178,7 +208,6 @@ const page = () => {
               </svg>
             </button>
           </div>
-
         </main>
       </div>
       <Footer />
